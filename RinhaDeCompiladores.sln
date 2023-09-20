@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34112.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RinhaDeCompiladores", "RinhaDeCompiladores\RinhaDeCompiladores.csproj", "{6C0163AD-D6EB-4EBD-9FE3-42A1F0FA9B8D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{128DCB17-F9B9-4748-A0A6-D5A6712E36B8}"
+	ProjectSection(SolutionItems) = preProject
+		fib.json = fib.json
+		primitive-sum.json = primitive-sum.json
+		print.json = print.json
+		print_let.json = print_let.json
+		sum.json = sum.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C0163AD-D6EB-4EBD-9FE3-42A1F0FA9B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C0163AD-D6EB-4EBD-9FE3-42A1F0FA9B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C0163AD-D6EB-4EBD-9FE3-42A1F0FA9B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C0163AD-D6EB-4EBD-9FE3-42A1F0FA9B8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02374FD2-5150-4429-AE03-DE5FB7F65C8E}
+	EndGlobalSection
+EndGlobal
