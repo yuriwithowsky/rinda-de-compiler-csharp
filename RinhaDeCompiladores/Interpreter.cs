@@ -75,8 +75,13 @@ public class Interpreter
             var arguments = node["arguments"];
 
             var text = callee["text"].GetValue<string>();
-
             var newNode = scope[text];
+            var localScope = new Dictionary<string, JsonNode>();
+
+            foreach (var item in scope)
+            {
+                localScope.Add(item.Key, item.Value);
+            }
 
             var parameters = newNode["parameters"] as JsonArray;
             
@@ -85,17 +90,17 @@ public class Interpreter
                 var argValue = Execute(arguments[i], scope);
                 var paramName = parameters[i]["text"].GetValue<string>();
 
-                if(!scope.ContainsKey(paramName))
+                if(!localScope.ContainsKey(paramName))
                 {
-                    scope.Add(parameters[i]["text"].GetValue<string>(), argValue);
+                    localScope.Add(parameters[i]["text"].GetValue<string>(), argValue);
                 } 
                 else
                 {
-                    scope[paramName] = argValue;
+                    localScope[paramName] = argValue;
                 }
             }
 
-            return Execute(newNode, scope);
+            return Execute(newNode, localScope);
         }
         
         throw new KindNotFoundException(kind);
@@ -130,7 +135,34 @@ public class Interpreter
                 return $"{numberLhs - numberRhs}";
 
             }
-            return $"{lhsValue + rhsValue}";
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} - {rhsValue}");
+        }
+        if (op.Equals("Div"))
+        {
+            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+            {
+                return $"{numberLhs / numberRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} / {rhsValue}");
+        }
+        if (op.Equals("Mul"))
+        {
+            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+            {
+                return $"{numberLhs * numberRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} * {rhsValue}");
+        }
+        if (op.Equals("Rem"))
+        {
+            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+            {
+                return $"{numberLhs % numberRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} % {rhsValue}");
         }
         if (op.Equals("Lt"))
         {
@@ -139,11 +171,60 @@ public class Interpreter
                 return $"{numberLhs < numberRhs}";
 
             }
-            return $"{lhsValue + rhsValue}";
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} < {rhsValue}");
+        }
+        if (op.Equals("Lte"))
+        {
+            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+            {
+                return $"{numberLhs <= numberRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} <= {rhsValue}");
         }
         if (op.Equals("Eq"))
         {
             return (lhsValue == rhsValue).ToString();
+        }
+        if (op.Equals("Neq"))
+        {
+            return (lhsValue != rhsValue).ToString();
+        }
+        if (op.Equals("Gt"))
+        {
+            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+            {
+                return $"{numberLhs > numberRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} > {rhsValue}");
+        }
+        if (op.Equals("Gte"))
+        {
+            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+            {
+                return $"{numberLhs >= numberRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} >= {rhsValue}");
+        }
+        if (op.Equals("And"))
+        {
+            if (bool.TryParse(lhsValue, out bool boolLhs) && bool.TryParse(rhsValue, out bool boolRhs))
+            {
+                return $"{boolLhs && boolRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} && {rhsValue}");
+        }
+        if (op.Equals("Or"))
+        {
+            if (bool.TryParse(lhsValue, out bool boolLhs) && bool.TryParse(rhsValue, out bool boolRhs))
+            {
+                return $"{boolLhs || boolRhs}";
+
+            }
+            throw new InvalidOperationException($"Invalid op {op} {lhsValue} && {rhsValue}");
         }
 
         return null;

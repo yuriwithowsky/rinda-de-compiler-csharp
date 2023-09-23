@@ -1,7 +1,5 @@
 # Rinha de Compilers - C#
 
-## Sobre
-
 Projeto criado para a [Rinha de Compiladores](https://github.com/aripiprazole/rinha-de-compiler).
 
 ## Como usar
