@@ -15,6 +15,12 @@ public class Interpreter
 
             return value;
         }
+        if (kind.Equals("Bool"))
+        {
+            var value = node["value"].GetValue<bool>();
+
+            return value.ToString();
+        }
         if (kind.Equals("Int"))
         {
             var value = node["value"];
