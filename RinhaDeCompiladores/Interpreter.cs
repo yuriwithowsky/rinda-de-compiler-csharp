@@ -79,7 +79,6 @@ public class Interpreter
             var newNode = scope[text];
 
             var parameters = newNode["parameters"] as JsonArray;
-            var newScope = new Dictionary<string, JsonNode>();
             
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -89,41 +88,17 @@ public class Interpreter
                 if(!scope.ContainsKey(paramName))
                 {
                     scope.Add(parameters[i]["text"].GetValue<string>(), argValue);
-                } else
+                } 
+                else
                 {
                     scope[paramName] = argValue;
                 }
-
             }
 
             return Execute(newNode, scope);
-            //Execute(conditional, scope);
         }
         
         throw new KindNotFoundException(kind);
-        
-        return null;
-        //if (expression.Kind.Equals("Binary"))
-        //{
-        //    ExecuteBinary(expression);
-        //}
-
-        //if (expression.Kind.Equals("Let"))
-        //{
-        //    var functionName = expression.Name.Text;
-        //    Console.WriteLine(functionName);
-
-        //    ExecuteLet(expression.Value);
-        //}
-
-        //if (expression.Kind.Equals("Let"))
-        //{
-        //    var functionName = expression.Name.Text;
-        //    Console.WriteLine(functionName);
-
-        //    Execute(expression.Next);
-        //}
-
     }
 
     public void ExecutePrint(JsonNode node)
