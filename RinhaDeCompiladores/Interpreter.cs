@@ -48,7 +48,10 @@ public class Interpreter
         {
             var text = node["name"]["text"].ToString();
             var value = node["value"];
-            scope.Add(text, value);
+            if (!scope.ContainsKey(text))
+            {
+                scope.Add(text, value);
+            }
 
             var next = node["next"];
 
