@@ -14,7 +14,6 @@ var expression = root["expression"];
 
 var interpreter = new Interpreter();
     
-var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
-Console.WriteLine(result);
+interpreter.Execute(expression, new Dictionary<string, JsonNode>());
 
 Console.ReadKey();

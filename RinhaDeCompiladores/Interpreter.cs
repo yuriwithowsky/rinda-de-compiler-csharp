@@ -43,8 +43,11 @@ public class Interpreter
         if (kind.Equals("Print"))
         {
             var value = node["value"];
+            var content = Execute(value, scope);
+            
+            Console.WriteLine(content);
 
-            return Execute(value, scope);
+            return content;
         }
         if (kind.Equals("Binary"))
         {
