@@ -1,5 +1,6 @@
 ﻿using RinhaDeCompiladores.Exceptions;
 using System.Text.Json.Nodes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace RinhaDeCompiladores;
 
@@ -19,13 +20,20 @@ public class Interpreter
         {
             var value = node["value"].GetValue<bool>();
 
-            return value.ToString();
+            return value.ToString().ToLower();
         }
         if (kind.Equals("Int"))
         {
             var value = node["value"];
 
             return value.ToString();
+        }
+        if (kind.Equals("Tuple"))
+        {
+            var first = Execute(node["first"], scope);
+            var second = Execute(node["second"], scope);
+
+            return $"({first},{second})";
         }
         if (kind.Equals("Var"))
         {
@@ -45,7 +53,7 @@ public class Interpreter
             var value = node["value"];
             var content = Execute(value, scope);
             
-            Console.WriteLine(content);
+            Console.Write($"{content}\n");
 
             return content;
         }
@@ -75,7 +83,7 @@ public class Interpreter
             var condition = node["condition"];
             var resultCondition = Execute(condition, scope);
 
-            if (resultCondition.Equals("True"))
+            if (resultCondition.Equals("True", StringComparison.OrdinalIgnoreCase))
             {
                 return Execute(node["then"], scope);
             }
@@ -115,7 +123,7 @@ public class Interpreter
             return Execute(newNode, localScope);
         }
         
-        throw new KindNotFoundException(kind);
+        throw new KindNotImplementedExcepton(kind);
     }
 
     public void ExecutePrint(JsonNode node)

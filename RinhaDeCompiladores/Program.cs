@@ -1,7 +1,8 @@
 ﻿using RinhaDeCompiladores;
 using System.Text.Json.Nodes;
 
-var fileName = "combination.json";
+//var fileName = "tuple_print.json";
+var fileName = "source.rinha.json";
 
 if (args.Length > 0 && args[0] is not null)
     fileName = args[0];
