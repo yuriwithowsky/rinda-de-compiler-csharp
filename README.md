@@ -30,6 +30,6 @@ docker run -it --rm rinha-csharp fib.json
 - [x] Print
 - [x] Bool
 - [x] Var
-- [ ] First
-- [ ] Second
-- [ ] Tuple
+- [x] First
+- [x] Second
+- [x] Tuple
