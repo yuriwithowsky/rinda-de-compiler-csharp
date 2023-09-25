@@ -11,6 +11,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /rinha-compiler
 
 COPY --from=build /out .
-COPY --from=build /var/rinha ./var/rinha
 
 ENTRYPOINT ["dotnet", "RinhaDeCompiladores.dll"]
