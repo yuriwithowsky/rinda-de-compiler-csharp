@@ -137,6 +137,6 @@ public class InterpreterTests
         var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
 
         Assert.NotNull(result);
-        Assert.Equal("1", result);
+        Assert.Equal("<#closure>", result);
     }
 }

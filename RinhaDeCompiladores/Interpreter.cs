@@ -1,6 +1,7 @@
-﻿using RinhaDeCompiladores.Exceptions;
+﻿using RinhaDeCompiladores.Enums;
+using RinhaDeCompiladores.Exceptions;
+using RinhaDeCompiladores.Operations;
 using System.Text.Json.Nodes;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace RinhaDeCompiladores;
 
@@ -145,12 +146,7 @@ public class Interpreter
         var lhsValue = Execute(node["lhs"], scope);
         var rhsValue = Execute(node["rhs"], scope);
 
-        if (op.Equals("Add"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs + numberRhs}";
-
+        return ExecuteBinaryOperation(op, lhsValue, rhsValue);
             }
             return $"{lhsValue + rhsValue}";
         }
@@ -160,15 +156,11 @@ public class Interpreter
             {
                 return $"{numberLhs - numberRhs}";
 
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} - {rhsValue}");
-        }
-        if (op.Equals("Div"))
+    public string ExecuteBinaryOperation(string operation, string lhsValue, string rhsValue)
         {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+        if(!Enum.TryParse(operation, ignoreCase: true, out BinaryOp op))
             {
-                return $"{numberLhs / numberRhs}";
-
+            throw new Exception("Op not implemented");
             }
             throw new InvalidOperationException($"Invalid op {op} {lhsValue} / {rhsValue}");
         }
@@ -178,82 +170,23 @@ public class Interpreter
             {
                 return $"{numberLhs * numberRhs}";
 
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} * {rhsValue}");
-        }
-        if (op.Equals("Rem"))
+        return op switch
         {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs % numberRhs}";
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} % {rhsValue}");
-        }
-        if (op.Equals("Lt"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs < numberRhs}".ToLower();
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} < {rhsValue}");
-        }
-        if (op.Equals("Lte"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs <= numberRhs}".ToLower();
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} <= {rhsValue}");
-        }
-        if (op.Equals("Eq"))
-        {
-            return (lhsValue == rhsValue).ToString().ToLower();
-        }
-        if (op.Equals("Neq"))
-        {
-            return (lhsValue != rhsValue).ToString().ToLower();
-        }
-        if (op.Equals("Gt"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs > numberRhs}";
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} > {rhsValue}");
-        }
-        if (op.Equals("Gte"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs >= numberRhs}";
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} >= {rhsValue}");
-        }
-        if (op.Equals("And"))
-        {
-            if (bool.TryParse(lhsValue, out bool boolLhs) && bool.TryParse(rhsValue, out bool boolRhs))
-            {
-                return $"{boolLhs && boolRhs}".ToLower();
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} && {rhsValue}");
-        }
-        if (op.Equals("Or"))
-        {
-            if (bool.TryParse(lhsValue, out bool boolLhs) && bool.TryParse(rhsValue, out bool boolRhs))
-            {
-                return $"{boolLhs || boolRhs}".ToLower();
-
-            }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} && {rhsValue}");
-        }
-
-        return null;
+            BinaryOp.Add => new AddOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Sub => new SubOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Div => new DivOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Mul => new MulOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Rem => new RemOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Eq =>  new EqOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Neq => new NeqOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Lt =>  new LtOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Gt =>  new GtOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Lte => new LteOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Gte => new GteOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.And => new AndOperation().Execute(lhsValue, rhsValue),
+            BinaryOp.Or =>  new OrOperation().Execute(lhsValue, rhsValue),
+            _           =>  ""
+        };
     }
 
     public string ExecuteMemoized(string key, JsonNode node, Dictionary<string, JsonNode> scope)
