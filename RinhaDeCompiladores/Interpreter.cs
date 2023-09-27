@@ -148,13 +148,6 @@ public class Interpreter
 
         return ExecuteBinaryOperation(op, lhsValue, rhsValue);
             }
-            return $"{lhsValue + rhsValue}";
-        }
-        if (op.Equals("Sub"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs - numberRhs}";
 
     public string ExecuteBinaryOperation(string operation, string lhsValue, string rhsValue)
         {
@@ -162,13 +155,6 @@ public class Interpreter
             {
             throw new Exception("Op not implemented");
             }
-            throw new InvalidOperationException($"Invalid op {op} {lhsValue} / {rhsValue}");
-        }
-        if (op.Equals("Mul"))
-        {
-            if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
-            {
-                return $"{numberLhs * numberRhs}";
 
         return op switch
         {
