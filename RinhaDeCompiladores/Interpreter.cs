@@ -43,20 +43,24 @@ public class Interpreter
         {
             var text = node["text"].GetValue<string>();
 
-            var _scope = scope[text];
-
-            if(_scope is not JsonObject)
+            if (!scope.ContainsKey(text))
             {
-                return _scope.ToString();
+                scope.Add(text, null);
+            }
+            var newNode = scope[text];
+
+            if (newNode is not JsonObject)
+            {
+                return newNode.ToString();
             }
 
-            return Execute(_scope, scope);
+            return Execute(newNode, scope);
         }
         if (kind.Equals("Print"))
         {
             var value = node["value"];
             var content = Execute(value, scope);
-            
+
             Console.Write($"{content}\n");
 
             return content;
@@ -69,9 +73,18 @@ public class Interpreter
         {
             var text = node["name"]["text"].ToString();
             var value = node["value"];
+
             if (!scope.ContainsKey(text))
             {
-                scope.Add(text, value);
+                //scope.Add(text, value);
+                if (value["kind"].GetValue<string>() == "Function")
+                {
+                    scope.Add(text, value);
+                }
+                else
+                {
+                    scope.Add(text, Execute(value, scope));
+                }
             }
 
             var next = node["next"];
@@ -96,10 +109,16 @@ public class Interpreter
         if (kind.Equals("Call"))
         {
             var callee = node["callee"];
-            var arguments = node["arguments"];
 
+            var arguments = node["arguments"];
             var text = callee["text"].GetValue<string>();
             var newNode = scope[text];
+
+            if (newNode is not JsonObject)
+            {
+                return newNode.ToString();
+            }
+
             var localScope = new Dictionary<string, JsonNode>();
 
             foreach (var item in scope)
@@ -127,7 +146,6 @@ public class Interpreter
             var key = text + "_" + string.Join(",", localScope.Where(x => x.Value is not JsonObject).Select(x => $"{x.Key}_{x.Value}"));
             
             return ExecuteMemoized(key, newNode, localScope);
-            return Execute(newNode, localScope);
         }
         
         throw new KindNotImplementedExcepton(kind);
@@ -147,14 +165,14 @@ public class Interpreter
         var rhsValue = Execute(node["rhs"], scope);
 
         return ExecuteBinaryOperation(op, lhsValue, rhsValue);
-            }
+    }
 
     public string ExecuteBinaryOperation(string operation, string lhsValue, string rhsValue)
-        {
+    {
         if(!Enum.TryParse(operation, ignoreCase: true, out BinaryOp op))
-            {
+        {
             throw new Exception("Op not implemented");
-            }
+        }
 
         return op switch
         {
