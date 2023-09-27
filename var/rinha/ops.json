@@ -1,0 +1,184 @@
+{
+  "name": "files/combination.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "execute",
+      "location": {
+        "start": 4,
+        "end": 11,
+        "filename": "files/combination.rinha"
+      }
+    },
+    "value": {
+      "kind": "Function",
+      "parameters": [
+        {
+          "text": "func",
+          "location": {
+            "start": 18,
+            "end": 22,
+            "filename": "files/combination.rinha"
+          }
+        },
+        {
+          "text": "n",
+          "location": {
+            "start": 24,
+            "end": 25,
+            "filename": "files/combination.rinha"
+          }
+        }
+      ],
+      "value": {
+        "kind": "Call",
+        "callee": {
+          "kind": "Var",
+          "text": "func",
+          "location": {
+            "start": 32,
+            "end": 36,
+            "filename": "files/combination.rinha"
+          }
+        },
+        "arguments": [
+          {
+            "kind": "Var",
+            "text": "n",
+            "location": {
+              "start": 37,
+              "end": 38,
+              "filename": "files/combination.rinha"
+            }
+          }
+        ],
+        "location": {
+          "start": 32,
+          "end": 39,
+          "filename": "files/combination.rinha"
+        }
+      },
+      "location": {
+        "start": 14,
+        "end": 41,
+        "filename": "files/combination.rinha"
+      }
+    },
+    "next": {
+      "kind": "Let",
+      "name": {
+        "text": "result",
+        "location": {
+          "start": 47,
+          "end": 53,
+          "filename": "files/combination.rinha"
+        }
+      },
+      "value": {
+        "kind": "Call",
+        "callee": {
+          "kind": "Var",
+          "text": "execute",
+          "location": {
+            "start": 56,
+            "end": 63,
+            "filename": "files/combination.rinha"
+          }
+        },
+        "arguments": [
+          {
+            "kind": "Function",
+            "parameters": [
+              {
+                "text": "n",
+                "location": {
+                  "start": 68,
+                  "end": 69,
+                  "filename": "files/combination.rinha"
+                }
+              }
+            ],
+            "value": {
+              "kind": "Binary",
+              "lhs": {
+                "kind": "Var",
+                "text": "n",
+                "location": {
+                  "start": 76,
+                  "end": 77,
+                  "filename": "files/combination.rinha"
+                }
+              },
+              "op": "Mul",
+              "rhs": {
+                "kind": "Var",
+                "text": "n",
+                "location": {
+                  "start": 80,
+                  "end": 81,
+                  "filename": "files/combination.rinha"
+                }
+              },
+              "location": {
+                "start": 76,
+                "end": 81,
+                "filename": "files/combination.rinha"
+              }
+            },
+            "location": {
+              "start": 64,
+              "end": 83,
+              "filename": "files/combination.rinha"
+            }
+          },
+          {
+            "kind": "Int",
+            "value": 4,
+            "location": {
+              "start": 85,
+              "end": 86,
+              "filename": "files/combination.rinha"
+            }
+          }
+        ],
+        "location": {
+          "start": 56,
+          "end": 87,
+          "filename": "files/combination.rinha"
+        }
+      },
+      "next": {
+        "kind": "Print",
+        "value": {
+          "kind": "Var",
+          "text": "result",
+          "location": {
+            "start": 97,
+            "end": 103,
+            "filename": "files/combination.rinha"
+          }
+        },
+        "location": {
+          "start": 91,
+          "end": 104,
+          "filename": "files/combination.rinha"
+        }
+      },
+      "location": {
+        "start": 43,
+        "end": 104,
+        "filename": "files/combination.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 104,
+      "filename": "files/combination.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 104,
+    "filename": "files/combination.rinha"
+  }
+}

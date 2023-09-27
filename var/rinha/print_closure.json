@@ -1,0 +1,77 @@
+{
+  "name": "files/print-closure.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "f1",
+      "location": {
+        "start": 4,
+        "end": 6,
+        "filename": "files/print-closure.rinha"
+      }
+    },
+    "value": {
+      "kind": "Function",
+      "parameters": [],
+      "value": {
+        "kind": "Binary",
+        "lhs": {
+          "kind": "Int",
+          "value": 1,
+          "location": {
+            "start": 21,
+            "end": 22,
+            "filename": "files/print-closure.rinha"
+          }
+        },
+        "op": "Add",
+        "rhs": {
+          "kind": "Int",
+          "value": 1,
+          "location": {
+            "start": 25,
+            "end": 26,
+            "filename": "files/print-closure.rinha"
+          }
+        },
+        "location": {
+          "start": 21,
+          "end": 26,
+          "filename": "files/print-closure.rinha"
+        }
+      },
+      "location": {
+        "start": 9,
+        "end": 28,
+        "filename": "files/print-closure.rinha"
+      }
+    },
+    "next": {
+      "kind": "Print",
+      "value": {
+        "kind": "Var",
+        "text": "f1",
+        "location": {
+          "start": 36,
+          "end": 38,
+          "filename": "files/print-closure.rinha"
+        }
+      },
+      "location": {
+        "start": 30,
+        "end": 39,
+        "filename": "files/print-closure.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 39,
+      "filename": "files/print-closure.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 39,
+    "filename": "files/print-closure.rinha"
+  }
+}
