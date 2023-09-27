@@ -188,7 +188,7 @@ public class Interpreter
         {
             if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
             {
-                return $"{numberLhs < numberRhs}";
+                return $"{numberLhs < numberRhs}".ToLower();
 
             }
             throw new InvalidOperationException($"Invalid op {op} {lhsValue} < {rhsValue}");
@@ -197,18 +197,18 @@ public class Interpreter
         {
             if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
             {
-                return $"{numberLhs <= numberRhs}";
+                return $"{numberLhs <= numberRhs}".ToLower();
 
             }
             throw new InvalidOperationException($"Invalid op {op} {lhsValue} <= {rhsValue}");
         }
         if (op.Equals("Eq"))
         {
-            return (lhsValue == rhsValue).ToString();
+            return (lhsValue == rhsValue).ToString().ToLower();
         }
         if (op.Equals("Neq"))
         {
-            return (lhsValue != rhsValue).ToString();
+            return (lhsValue != rhsValue).ToString().ToLower();
         }
         if (op.Equals("Gt"))
         {
@@ -232,7 +232,7 @@ public class Interpreter
         {
             if (bool.TryParse(lhsValue, out bool boolLhs) && bool.TryParse(rhsValue, out bool boolRhs))
             {
-                return $"{boolLhs && boolRhs}";
+                return $"{boolLhs && boolRhs}".ToLower();
 
             }
             throw new InvalidOperationException($"Invalid op {op} {lhsValue} && {rhsValue}");
@@ -241,7 +241,7 @@ public class Interpreter
         {
             if (bool.TryParse(lhsValue, out bool boolLhs) && bool.TryParse(rhsValue, out bool boolRhs))
             {
-                return $"{boolLhs || boolRhs}";
+                return $"{boolLhs || boolRhs}".ToLower();
 
             }
             throw new InvalidOperationException($"Invalid op {op} {lhsValue} && {rhsValue}");
