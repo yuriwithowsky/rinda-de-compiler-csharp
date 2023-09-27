@@ -6,6 +6,9 @@ namespace RinhaDeCompiladores;
 
 public class Interpreter
 {
+    private Dictionary<string, string> _cache = new();
+    private Dictionary<string, int> _countCheckPure = new();
+
     public string Execute(JsonNode node, Dictionary<string, JsonNode> scope)
     {
         var kind = node["kind"].GetValue<string>();
@@ -120,6 +123,9 @@ public class Interpreter
                 }
             }
 
+            var key = text + "_" + string.Join(",", localScope.Where(x => x.Value is not JsonObject).Select(x => $"{x.Key}_{x.Value}"));
+            
+            return ExecuteMemoized(key, newNode, localScope);
             return Execute(newNode, localScope);
         }
         
@@ -249,4 +255,28 @@ public class Interpreter
 
         return null;
     }
+
+    public string ExecuteMemoized(string key, JsonNode node, Dictionary<string, JsonNode> scope)
+    {
+        if (!_cache.TryGetValue(key, out string result))
+        {
+            result = Execute(node, scope);
+            _cache[key] = result;
+            _countCheckPure[key] = 1;
+        } else
+        {
+            var countCheckPure = _countCheckPure.ContainsKey(key) ? _countCheckPure[key] : 0;
+            if (countCheckPure == 1)
+            {
+                result = Execute(node, scope);
+                if(_cache[key] == result)
+                {
+                    _countCheckPure[key] += 1;
+                }
+            }
+        }
+
+        return result;
+    }
+
 }
