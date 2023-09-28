@@ -95,6 +95,10 @@ public class Interpreter
         {
             return Execute(node["value"], scope);
         }
+        if (kind.Equals("File"))
+        {
+            return Execute(node["expression"], scope);
+        }
         if (kind.Equals("If"))
         {
             var condition = node["condition"];
