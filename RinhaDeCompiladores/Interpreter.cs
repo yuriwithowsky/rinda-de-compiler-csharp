@@ -76,15 +76,15 @@ public class Interpreter
 
             if (!scope.ContainsKey(text))
             {
-                //scope.Add(text, value);
-                if (value["kind"].GetValue<string>() == "Function")
-                {
-                    scope.Add(text, value);
-                }
-                else
-                {
-                    scope.Add(text, Execute(value, scope));
-                }
+                scope.Add(text, value);
+                //if (value["kind"].GetValue<string>() == "Function")
+                //{
+                //    scope.Add(text, value);
+                //}
+                //else
+                //{
+                //    scope.Add(text, Execute(value, scope));
+                //}
             }
 
             var next = node["next"];
@@ -109,9 +109,10 @@ public class Interpreter
         if (kind.Equals("Call"))
         {
             var callee = node["callee"];
-
+            //var funcCallee = Execute(callee, scope);
             var arguments = node["arguments"];
             var text = callee["text"].GetValue<string>();
+
             var newNode = scope[text];
 
             if (newNode is not JsonObject)
@@ -132,15 +133,16 @@ public class Interpreter
             {
                 var argValue = Execute(arguments[i], scope);
                 var paramName = parameters[i]["text"].GetValue<string>();
+                localScope[paramName] = argValue;
 
-                if(!localScope.ContainsKey(paramName))
-                {
-                    localScope.Add(parameters[i]["text"].GetValue<string>(), argValue);
-                } 
-                else
-                {
-                    localScope[paramName] = argValue;
-                }
+                //if (!localScope.ContainsKey(paramName))
+                //{
+                //    localScope.Add(paramName, argValue);
+                //} 
+                //else
+                //{
+                //    localScope[paramName] = argValue;
+                //}
             }
 
             var key = text + "_" + string.Join(",", localScope.Where(x => x.Value is not JsonObject).Select(x => $"{x.Key}_{x.Value}"));
