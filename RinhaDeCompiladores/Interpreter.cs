@@ -12,179 +12,188 @@ public class Interpreter
 
     public dynamic Execute(Term term, Dictionary<string, dynamic> scope)
     {
-        if(term is Ast.File file)
-        {
-            return Execute(file.Expression, scope);
-        }
-        if (term is Ast.Str str)
-        {
-            return str.Value;
-        }
-        if (term is Ast.Bool @bool)
-        {
-            return @bool.Value;
-        }
-        if (term is Ast.Int @int)
-        {
-            return @int.Value;
-        }
-        if (term is Ast.Tuple tuple)
-        {
-            var firstValue = Execute(tuple.First, scope);
-            var secondValue = Execute(tuple.Second, scope);
+        return term.Kind switch { 
+            AstKind.Bool => ExecuteBool(term as Bool),
+            AstKind.Str => ExecuteStr(term as Ast.Str),
+            AstKind.Int => ExecuteInt(term as Ast.Int),
+            AstKind.File => ExecuteFile(term as Ast.File, scope),
+            AstKind.Tuple => ExecuteTuple(term as Ast.Tuple, scope),
+            AstKind.First => ExecuteFirst(term as Ast.First, scope),
+            AstKind.Second => ExecuteSecond(term as Ast.Second, scope),
+            AstKind.Var => ExecuteVar(term as Ast.Var, scope),
+            AstKind.Print => ExecutePrint(term as Ast.Print, scope),
+            AstKind.Binary => ExecuteBinary(term as Ast.Binary, scope),
+            AstKind.Let => ExecuteLet(term as Ast.Let, scope),
+            AstKind.Function => ExecuteFunction(term as Ast.Function, scope),
+            AstKind.If => ExecuteIf(term as Ast.If, scope),
+            AstKind.Call => ExecuteCall(term as Ast.Call, scope),
+            _ => throw new KindNotImplementedExcepton(term.GetType().FullName)
+        };
+    }
 
-            return new dynamic[] { firstValue, secondValue };
-        }
-        if (term is Ast.First first)
-        {
-            var value = Execute(first.Value, scope);
+    public dynamic ExecuteFile(Ast.File file, Dictionary<string, object> scope) => Execute(file.Expression, scope);
 
-            if(value is dynamic[] array)
+    public static string ExecuteStr(Ast.Str str) => str.Value;
+
+    public static bool ExecuteBool(Ast.Bool @bool) => @bool.Value;
+    
+    public static int ExecuteInt(Ast.Int @int) => @int.Value;
+
+    public dynamic[] ExecuteTuple(Ast.Tuple tuple, Dictionary<string, object> scope)
+    {
+        var firstValue = Execute(tuple.First, scope);
+        var secondValue = Execute(tuple.Second, scope);
+
+        return new dynamic[] { firstValue, secondValue };
+    }
+
+    public dynamic ExecuteFirst(First first, Dictionary<string, object> scope)
+    {
+        var value = Execute(first.Value, scope);
+
+        if (value is dynamic[] array)
+        {
+            return array[0];
+        }
+        throw new Exception("First needs a Tuple");
+    }
+
+    public dynamic ExecuteSecond(Second second, Dictionary<string, object> scope)
+    {
+        var value = Execute(second.Value, scope);
+
+        if (value is dynamic[] array)
+        {
+            return array[1];
+        }
+        throw new Exception("Second needs a Tuple");
+    }
+
+    public dynamic ExecuteVar(Var var, Dictionary<string, object> scope)
+    {
+        var text = var.Text;
+
+        if (!scope.TryGetValue(text, out dynamic? value))
+        {
+            throw new Exception($"Var {text} not found");
+        }
+
+        if (value is Var)
+        {
+            return Execute(value, scope);
+        }
+
+        return value;
+    }
+    
+    public dynamic ExecuteFunction(Function function, Dictionary<string, object> scope)
+    {
+        var func = new Func<List<dynamic>, dynamic>((arguments) => {
+            var parameters = function.Parameters;
+
+            var localScope = new Dictionary<string, dynamic>();
+
+            foreach (var item in scope)
             {
-                return array[0];
-            }
-            throw new Exception("First needs a Tuple");
-        }
-        if (term is Ast.Second second)
-        {
-            var value = Execute(second.Value, scope);
-
-            if (value is dynamic[] array)
-            {
-                return array[1];
-            }
-            throw new Exception("Second needs a Tuple");
-        }
-        if (term is Ast.Var var)
-        {
-            var text = var.Text;
-
-            if (!scope.TryGetValue(text, out dynamic? value))
-            {
-                throw new Exception($"Var {text} not found");
-            }
-
-            if(value is Var @var1)
-            {
-                return Execute(value, scope);
-            }
-
-            return value;
-        }
-        if (term is Ast.Print print)
-        {
-            var value = Execute(print.Value, scope);
-            var text = string.Empty;
-
-            if (value is dynamic[] array)
-            {
-                text = $"({array[0]},{array[1]})";
-            }
-            else if (value is Func<List<dynamic>, dynamic>)
-            {
-                text = $"<#closure>";
-            }
-            else
-            {
-                text = value.ToString();
-            }
-
-            Console.Write($"{text}\n");
-
-            return text;
-        }
-        if (term is Binary binary)
-        {
-            return ExecuteBinary(binary, scope);
-        }
-        if (term is Let let)
-        {
-            var text = let.Name.Text;
-            var value = let.Value;
-
-            if(value is Var @var1)
-            {
-                scope[text] = value;
-            }
-            else
-            {
-                scope[text] = Execute(value, scope);
+                localScope.Add(item.Key, item.Value);
             }
 
-            var next = let.Next;
-
-            return Execute(next, scope);
-        }
-        if (term is Ast.Function function)
-        {
-            var func = new Func<List<dynamic>, dynamic>((arguments) => {
-                var parameters = function.Parameters;
-
-                var localScope = new Dictionary<string, dynamic>();
-
-                foreach (var item in scope)
-                {
-                    localScope.Add(item.Key, item.Value);
-                }
-
-                for (int i = 0; i < arguments.Count; i++)
-                {
-                    var paramName = parameters[i].Text;
-                    localScope[paramName] = arguments[i];
-                }
-
-                return Execute(function.Value, localScope);
-            });
-
-            return func;
-        }
-        if (term is Ast.If @if)
-        {
-            var condition = @if.Condition;
-            var resultCondition = Execute(condition, scope);
-
-            if (resultCondition == true)
+            for (int i = 0; i < arguments.Count; i++)
             {
-                return Execute(@if.Then, scope);
-            }
-            return Execute(@if.Otherwise, scope);
-        }
-        if (term is Call call)
-        {
-            var callee = call.Callee;
-
-            var arguments =new List<dynamic>();
-            string calleeText = null;
-
-            if(callee is Var @var1)
-            {
-                calleeText = @var1.Text;
+                var paramName = parameters[i].Text;
+                localScope[paramName] = arguments[i];
             }
 
-            foreach (var item in call.Arguments)
-            {
-                var argValue = Execute(item, scope);
-                arguments.Add(argValue);
-            }
+            return Execute(function.Value, localScope);
+        });
 
-            var key = calleeText + "_" + string.Join(",", arguments.Select(x => $"{x}"));
+        return func;
+    }
 
-            var result = ExecuteMemoized(key, callee, scope, arguments);
-            
-            return result;
+    public dynamic ExecuteCall(Call call, Dictionary<string, object> scope)
+    {
+        var callee = call.Callee;
+
+        var arguments = new List<dynamic>();
+        string calleeText = null;
+
+        if (callee is Var @var1)
+        {
+            calleeText = @var1.Text;
         }
+
+        foreach (var item in call.Arguments)
+        {
+            var argValue = Execute(item, scope);
+            arguments.Add(argValue);
+        }
+
+        var key = calleeText + "_" + string.Join(",", arguments.Select(x => $"{x}"));
+
+        var result = ExecuteMemoized(key, callee, scope, arguments);
+
+        return result;
+    }
+
+    public dynamic ExecuteIf(If @if, Dictionary<string, object> scope)
+    {
+        var condition = @if.Condition;
+        var resultCondition = Execute(condition, scope);
+
+        if (resultCondition == true)
+        {
+            return Execute(@if.Then, scope);
+        }
+        return Execute(@if.Otherwise, scope);
+    }
+
+    public dynamic ExecutePrint(Print print, Dictionary<string, dynamic> scope)
+    {
+        var value = Execute(print.Value, scope);
         
-        throw new KindNotImplementedExcepton(term.GetType().FullName);
+        var text = string.Empty;
+
+        if (value is dynamic[] array)
+        {
+            text = $"({array[0]},{array[1]})";
+        }
+        else if (value is Func<List<dynamic>, dynamic>)
+        {
+            text = $"<#closure>";
+        }
+        else
+        {
+            text = value.ToString();
+        }
+
+        Console.Write($"{text}\n");
+
+        return text;
+    }
+
+    public dynamic ExecuteLet(Let let, Dictionary<string, dynamic> scope)
+    {
+        var text = let.Name.Text;
+        var value = let.Value;
+
+        if (value is Var)
+        {
+            scope[text] = value;
+        }
+        else
+        {
+            scope[text] = Execute(value, scope);
+        }
+
+        return Execute(let.Next, scope);
     }
 
     public dynamic ExecuteBinary(Binary binary, Dictionary<string, dynamic> scope)
     {
-        var op = binary.Op;
-
         var lhsValue = Execute(binary.Lhs, scope).ToString();
         var rhsValue = Execute(binary.Rhs, scope).ToString();
 
-        return ExecuteBinaryOperation(op, lhsValue, rhsValue);
+        return ExecuteBinaryOperation(binary.Op, lhsValue, rhsValue);
     }
 
     public dynamic ExecuteBinaryOperation(BinaryOp op, string lhsValue, string rhsValue)
@@ -204,7 +213,7 @@ public class Interpreter
             BinaryOp.Gte => new GteOperation().Execute(lhsValue, rhsValue),
             BinaryOp.And => new AndOperation().Execute(lhsValue, rhsValue),
             BinaryOp.Or =>  new OrOperation().Execute(lhsValue, rhsValue),
-            _           =>  ""
+            _ =>  throw new NotImplementedException($"BinaryOp not implemented value: {op}")
         };
     }
 

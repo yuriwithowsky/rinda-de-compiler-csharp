@@ -2,7 +2,6 @@
 using RinhaDeCompiladores.Ast;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 var fileName = "source.rinha.json";
@@ -15,7 +14,7 @@ var path = $"/var/rinha/{fileName}";
 #if DEBUG
     var stopwatch = new Stopwatch();
     stopwatch.Start();
-    path = "var/rinha/tuple.json";
+    path = "var/rinha/operations.json";
 #endif
 
 using FileStream stream = System.IO.File.OpenRead(path);
