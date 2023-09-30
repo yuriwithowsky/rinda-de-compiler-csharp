@@ -11,7 +11,7 @@ public class RemOperationTests
 
         var result = operation.Execute("10", "10");
 
-        Assert.Equal(expected: "0", result);
+        Assert.Equal(expected: 0, actual: result);
     }
 
     [Fact]

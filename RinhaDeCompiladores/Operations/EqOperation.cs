@@ -1,9 +1,9 @@
 ﻿namespace RinhaDeCompiladores.Operations;
 
-public class EqOperation
+public class EqOperation : IOperation
 {
-    public string Execute(string lhsValue, string rhsValue)
+    public dynamic Execute(string lhsValue, string rhsValue)
     {
-        return (lhsValue == rhsValue).ToString().ToLower();
+        return lhsValue == rhsValue;
     }
 }

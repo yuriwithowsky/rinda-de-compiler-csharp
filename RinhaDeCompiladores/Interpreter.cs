@@ -114,7 +114,7 @@ public class Interpreter
             var condition = @if.Condition;
             var resultCondition = Execute(condition, scope);
 
-            if (resultCondition.Equals("True", StringComparison.OrdinalIgnoreCase))
+            if (resultCondition == true)
             {
                 return Execute(@if.Then, scope);
             }
@@ -138,20 +138,17 @@ public class Interpreter
                 arguments.Add(argValue);
             }
 
-            //var result = Execute(callee, scope)(arguments);
-
             var key = calleeText + "_" + string.Join(",", arguments.Select(x => $"{x}"));
 
             var result = ExecuteMemoized(key, callee, scope, arguments);
+            
             return result;
-
-
         }
         
         throw new KindNotImplementedExcepton(term.GetType().FullName);
     }
 
-    public string ExecuteBinary(Binary binary, Dictionary<string, dynamic> scope)
+    public dynamic ExecuteBinary(Binary binary, Dictionary<string, dynamic> scope)
     {
         var op = binary.Op;
 

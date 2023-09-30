@@ -11,7 +11,7 @@ public class AddOperationTests
 
         var result = operation.Execute("1", "1");
 
-        Assert.Equal(expected: "2", result);
+        Assert.Equal(2, result);
     }
 
     [Fact]
@@ -21,6 +21,6 @@ public class AddOperationTests
 
         var result = operation.Execute("1", "a");
 
-        Assert.Equal(expected: "1a", result);
+        Assert.Equal(expected: "1a", $"{result}");
     }
 }

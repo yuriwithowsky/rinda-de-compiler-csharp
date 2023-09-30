@@ -1,9 +1,9 @@
 ﻿namespace RinhaDeCompiladores.Operations;
 
-public class NeqOperation
+public class NeqOperation : IOperation
 {
-    public string Execute(string lhsValue, string rhsValue)
+    public dynamic Execute(string lhsValue, string rhsValue)
     {
-        return (lhsValue != rhsValue).ToString().ToLower();
+        return lhsValue != rhsValue;
     }
 }

@@ -11,7 +11,7 @@ public class GteOperationTests
 
         var result = operation.Execute("5", "1");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
     [Fact]
     public void Gte_FirstNumberIsEqualThanSecondNumber()
@@ -20,7 +20,7 @@ public class GteOperationTests
 
         var result = operation.Execute("5", "5");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class GteOperationTests
 
         var result = operation.Execute("5", "10");
 
-        Assert.Equal(expected: "false", result);
+        Assert.False(result);
     }
 
     [Fact]

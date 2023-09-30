@@ -11,7 +11,7 @@ public class OrOperationTests
 
         var result = operation.Execute("true", "true");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
     [Fact]
     public void Or_FalseAndFalse()
@@ -20,7 +20,7 @@ public class OrOperationTests
 
         var result = operation.Execute("false", "false");
 
-        Assert.Equal(expected: "false", result);
+        Assert.False(result);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class OrOperationTests
 
         var result = operation.Execute("true", "false");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class OrOperationTests
 
         var result = operation.Execute("false", "true");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
 
     [Fact]

@@ -11,7 +11,7 @@ public class SubOperationTests
 
         var result = operation.Execute("1", "1");
 
-        Assert.Equal(expected: "0", result);
+        Assert.Equal(expected: 0, actual: result);
     }
 
     [Fact]

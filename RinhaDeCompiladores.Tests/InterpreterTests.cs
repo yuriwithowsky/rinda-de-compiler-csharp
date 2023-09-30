@@ -9,6 +9,12 @@ namespace RinhaDeCompiladores.Tests;
 
 public class InterpreterTests
 {
+    private Interpreter _interpreter;
+
+    public InterpreterTests()
+    {
+        _interpreter = new Interpreter();
+    }
 
     private AstRoot Serializer(string path)
     {
@@ -19,15 +25,14 @@ public class InterpreterTests
 
         return JsonSerializer.Deserialize(stream, typeof(AstRoot), new SourceGenerationContext(options)) as AstRoot;
     }
+
     [Fact]
     public void Sum()
     {
         var path = "var/rinha/sum.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("15", result);
@@ -39,12 +44,10 @@ public class InterpreterTests
         var path = "var/rinha/primitive-sum.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
-        Assert.Equal("3", result);
+        Assert.Equal(3, result);
     }
 
     [Fact]
@@ -54,9 +57,7 @@ public class InterpreterTests
 
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("45", result);
@@ -68,9 +69,7 @@ public class InterpreterTests
         var path = "var/rinha/fib.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("832040", result);
@@ -82,9 +81,7 @@ public class InterpreterTests
         var path = "var/rinha/tuple.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("(1,2)", result);
@@ -96,9 +93,7 @@ public class InterpreterTests
         var path = "var/rinha/variavel-livre.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("1", result);
@@ -110,9 +105,7 @@ public class InterpreterTests
         var path = "var/rinha/closure.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("30", result);
@@ -124,9 +117,7 @@ public class InterpreterTests
         var path = "var/rinha/print_closure.json";
         var ast = Serializer(path);
 
-        var interpreter = new Interpreter();
-
-        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("<#closure>", result);

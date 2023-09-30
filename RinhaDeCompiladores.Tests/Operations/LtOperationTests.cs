@@ -11,7 +11,7 @@ public class LtOperationTests
 
         var result = operation.Execute("1", "5");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
 
     [Fact]
@@ -21,7 +21,7 @@ public class LtOperationTests
 
         var result = operation.Execute("5", "5");
 
-        Assert.Equal(expected: "false", result);
+        Assert.False(result);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class LtOperationTests
 
         var result = operation.Execute("5", "1");
 
-        Assert.Equal(expected: "false", result);
+        Assert.False(result);
     }
     [Fact]
     public void Lt_OneNumberAndOneLetter()

@@ -11,7 +11,7 @@ public class MulOperationTests
 
         var result = operation.Execute("5", "5");
 
-        Assert.Equal(expected: "25", result);
+        Assert.Equal(expected: 25, actual: result);
     }
 
     [Fact]

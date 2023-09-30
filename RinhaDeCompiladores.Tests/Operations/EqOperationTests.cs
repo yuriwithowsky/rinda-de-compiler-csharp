@@ -11,7 +11,7 @@ public class EqOperationTests
 
         var result = operation.Execute("true", "true");
 
-        Assert.Equal(expected: "true", result);
+        Assert.True(result);
     }
 
     [Fact]
@@ -21,6 +21,6 @@ public class EqOperationTests
 
         var result = operation.Execute("true", "false");
 
-        Assert.Equal(expected: "false", result);
+        Assert.False(result);
     }
 }

@@ -11,7 +11,7 @@ public class DivOperationTests
 
         var result = operation.Execute("10", "10");
 
-        Assert.Equal(expected: "1", result);
+        Assert.Equal(expected: 1, actual: result);
     }
 
     [Fact]

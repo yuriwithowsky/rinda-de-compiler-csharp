@@ -15,12 +15,10 @@ var path = $"/var/rinha/{fileName}";
 #if DEBUG
     var stopwatch = new Stopwatch();
     stopwatch.Start();
-    path = "var/rinha/print_closure.json";
+    path = "var/rinha/operations.json";
 #endif
 
 using FileStream stream = System.IO.File.OpenRead(path);
-//var root = JsonObject.Parse(stream);
-//var expression = root["expression"];
 
 var interpreter = new Interpreter();
 

@@ -1,12 +1,12 @@
 ﻿namespace RinhaDeCompiladores.Operations;
 
-public class MulOperation
+public class MulOperation : IOperation
 {
-    public string Execute(string lhsValue, string rhsValue)
+    public dynamic Execute(string lhsValue, string rhsValue)
     {
         if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
         {
-            return $"{numberLhs * numberRhs}";
+            return numberLhs * numberRhs;
         }
         throw new InvalidOperationException($"Invalid op {nameof(MulOperation)} {lhsValue} * {rhsValue}");
     }
