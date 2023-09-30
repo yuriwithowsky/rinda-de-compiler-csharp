@@ -4,7 +4,7 @@ public class LtOperation : IOperation
 {
     public dynamic Execute(string lhsValue, string rhsValue)
     {
-        if (int.TryParse(lhsValue, out int numberLhs) && int.TryParse(rhsValue, out int numberRhs))
+        if (long.TryParse(lhsValue, out long numberLhs) && long.TryParse(rhsValue, out long numberRhs))
         {
             return numberLhs < numberRhs;
         }
