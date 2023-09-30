@@ -30,10 +30,30 @@ public class Interpreter
         }
         if (term is Ast.Tuple tuple)
         {
-            var first = Execute(tuple.First, scope);
-            var second = Execute(tuple.Second, scope);
+            var firstValue = Execute(tuple.First, scope);
+            var secondValue = Execute(tuple.Second, scope);
 
-            return $"({first},{second})";
+            return new dynamic[] { firstValue, secondValue };
+        }
+        if (term is Ast.First first)
+        {
+            var value = Execute(first.Value, scope);
+
+            if(value is dynamic[] array)
+            {
+                return array[0];
+            }
+            throw new Exception("First needs a Tuple");
+        }
+        if (term is Ast.Second second)
+        {
+            var value = Execute(second.Value, scope);
+
+            if (value is dynamic[] array)
+            {
+                return array[1];
+            }
+            throw new Exception("Second needs a Tuple");
         }
         if (term is Ast.Var var)
         {
