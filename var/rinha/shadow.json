@@ -1,0 +1,100 @@
+{
+  "name": "files/shadow.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "reference",
+      "location": {
+        "start": 4,
+        "end": 13,
+        "filename": "files/shadow.rinha"
+      }
+    },
+    "value": {
+      "kind": "Str",
+      "value": "teste",
+      "location": {
+        "start": 16,
+        "end": 23,
+        "filename": "files/shadow.rinha"
+      }
+    },
+    "next": {
+      "kind": "Let",
+      "name": {
+        "text": "alias",
+        "location": {
+          "start": 30,
+          "end": 35,
+          "filename": "files/shadow.rinha"
+        }
+      },
+      "value": {
+        "kind": "Var",
+        "text": "reference",
+        "location": {
+          "start": 38,
+          "end": 47,
+          "filename": "files/shadow.rinha"
+        }
+      },
+      "next": {
+        "kind": "Let",
+        "name": {
+          "text": "reference",
+          "location": {
+            "start": 54,
+            "end": 63,
+            "filename": "files/shadow.rinha"
+          }
+        },
+        "value": {
+          "kind": "Str",
+          "value": "teste2",
+          "location": {
+            "start": 66,
+            "end": 74,
+            "filename": "files/shadow.rinha"
+          }
+        },
+        "next": {
+          "kind": "Print",
+          "value": {
+            "kind": "Var",
+            "text": "alias",
+            "location": {
+              "start": 83,
+              "end": 88,
+              "filename": "files/shadow.rinha"
+            }
+          },
+          "location": {
+            "start": 77,
+            "end": 89,
+            "filename": "files/shadow.rinha"
+          }
+        },
+        "location": {
+          "start": 50,
+          "end": 89,
+          "filename": "files/shadow.rinha"
+        }
+      },
+      "location": {
+        "start": 26,
+        "end": 89,
+        "filename": "files/shadow.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 89,
+      "filename": "files/shadow.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 89,
+    "filename": "files/shadow.rinha"
+  }
+}

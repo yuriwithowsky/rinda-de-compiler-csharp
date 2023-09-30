@@ -1,6 +1,6 @@
 ﻿namespace RinhaDeCompiladores.Enums;
 
-internal enum BinaryOp
+public enum BinaryOp
 {
     Add,
     Sub,

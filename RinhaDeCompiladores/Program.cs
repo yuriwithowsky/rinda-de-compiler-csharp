@@ -1,6 +1,9 @@
 ﻿using RinhaDeCompiladores;
+using RinhaDeCompiladores.Ast;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 var fileName = "source.rinha.json";
 
@@ -12,16 +15,22 @@ var path = $"/var/rinha/{fileName}";
 #if DEBUG
     var stopwatch = new Stopwatch();
     stopwatch.Start();
-    path = "var/rinha/ops.json";
+    path = "var/rinha/print_closure.json";
 #endif
 
-using FileStream stream = File.OpenRead(path);
-var root = JsonObject.Parse(stream);
-var expression = root["expression"];
+using FileStream stream = System.IO.File.OpenRead(path);
+//var root = JsonObject.Parse(stream);
+//var expression = root["expression"];
 
 var interpreter = new Interpreter();
-    
-interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+
+var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+options.Converters.Add(new TermConverter());
+options.Converters.Add(new JsonStringEnumConverter());
+
+var deserialized = JsonSerializer.Deserialize(stream, typeof(AstRoot), new SourceGenerationContext(options)) as AstRoot;
+
+interpreter.Execute(deserialized.Expression, new Dictionary<string, dynamic>());
 
 #if DEBUG
     stopwatch.Stop();

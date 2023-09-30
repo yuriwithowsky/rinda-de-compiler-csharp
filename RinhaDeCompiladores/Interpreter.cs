@@ -1,185 +1,168 @@
-﻿using RinhaDeCompiladores.Enums;
+﻿using RinhaDeCompiladores.Ast;
+using RinhaDeCompiladores.Enums;
 using RinhaDeCompiladores.Exceptions;
 using RinhaDeCompiladores.Operations;
-using System.Text.Json.Nodes;
 
 namespace RinhaDeCompiladores;
 
 public class Interpreter
 {
-    private Dictionary<string, string> _cache = new();
+    private Dictionary<string, dynamic> _cache = new();
     private Dictionary<string, int> _countCheckPure = new();
 
-    public string Execute(JsonNode node, Dictionary<string, JsonNode> scope)
+    public dynamic Execute(Term term, Dictionary<string, dynamic> scope)
     {
-        var kind = node["kind"].GetValue<string>();
-
-        if (kind.Equals("Str"))
+        if(term is Ast.File file)
         {
-            var value = node["value"].GetValue<string>();
-
-            return value;
+            return Execute(file.Expression, scope);
         }
-        if (kind.Equals("Bool"))
+        if (term is Ast.Str str)
         {
-            var value = node["value"].GetValue<bool>();
-
-            return value.ToString().ToLower();
+            return str.Value;
         }
-        if (kind.Equals("Int"))
+        if (term is Ast.Bool @bool)
         {
-            var value = node["value"];
-
-            return value.ToString();
+            return @bool.Value;
         }
-        if (kind.Equals("Tuple"))
+        if (term is Ast.Int @int)
         {
-            var first = Execute(node["first"], scope);
-            var second = Execute(node["second"], scope);
+            return @int.Value;
+        }
+        if (term is Ast.Tuple tuple)
+        {
+            var first = Execute(tuple.First, scope);
+            var second = Execute(tuple.Second, scope);
 
             return $"({first},{second})";
         }
-        if (kind.Equals("Var"))
+        if (term is Ast.Var var)
         {
-            var text = node["text"].GetValue<string>();
+            var text = var.Text;
 
-            if (!scope.ContainsKey(text))
+            if (!scope.TryGetValue(text, out dynamic? value))
             {
-                scope.Add(text, null);
-            }
-            var newNode = scope[text];
-
-            if (newNode is not JsonObject)
-            {
-                return newNode.ToString();
+                throw new Exception($"Var {text} not found");
             }
 
-            return Execute(newNode, scope);
+            return value;
         }
-        if (kind.Equals("Print"))
+        if (term is Ast.Print print)
         {
-            var value = node["value"];
-            var content = Execute(value, scope);
+            var value = Execute(print.Value, scope);
+            var text = string.Empty;
 
-            Console.Write($"{content}\n");
-
-            return content;
-        }
-        if (kind.Equals("Binary"))
-        {
-            return ExecuteBinary(node, scope);
-        }
-        if (kind.Equals("Let"))
-        {
-            var text = node["name"]["text"].ToString();
-            var value = node["value"];
-
-            if (!scope.ContainsKey(text))
+            if(value is Func<List<dynamic>, dynamic>)
             {
-                scope.Add(text, value);
-                //if (value["kind"].GetValue<string>() == "Function")
-                //{
-                //    scope.Add(text, value);
-                //}
-                //else
-                //{
-                //    scope.Add(text, Execute(value, scope));
-                //}
+                text = $"<#closure>";
+            }
+            else
+            {
+                text = value.ToString();
             }
 
-            var next = node["next"];
+            Console.Write($"{text}\n");
 
-            return Execute(next, scope);
+            return text;
         }
-        if (kind.Equals("Function"))
+        if (term is Binary binary)
         {
-            return Execute(node["value"], scope);
+            return ExecuteBinary(binary, scope);
         }
-        if (kind.Equals("File"))
+        if (term is Let let)
         {
-            return Execute(node["expression"], scope);
-        }
-        if (kind.Equals("If"))
-        {
-            var condition = node["condition"];
-            var resultCondition = Execute(condition, scope);
+            var text = let.Name.Text;
+            var value = let.Value;
 
-            if (resultCondition.Equals("True", StringComparison.OrdinalIgnoreCase))
-            {
-                return Execute(node["then"], scope);
-            }
-            return Execute(node["otherwise"], scope);
-        }
-        if (kind.Equals("Call"))
-        {
-            var callee = node["callee"];
-            //var funcCallee = Execute(callee, scope);
-            var arguments = node["arguments"];
-            var text = callee["text"].GetValue<string>();
+            scope[text] = Execute(value, scope);
 
-            var newNode = scope[text];
-
-            if (newNode is not JsonObject)
-            {
-                return newNode.ToString();
-            }
-
-            var localScope = new Dictionary<string, JsonNode>();
+            var localScope = new Dictionary<string, dynamic>();
 
             foreach (var item in scope)
             {
                 localScope.Add(item.Key, item.Value);
             }
 
-            var parameters = newNode["parameters"] as JsonArray;
-            
-            for (int i = 0; i < parameters.Count; i++)
-            {
-                var argValue = Execute(arguments[i], scope);
-                var paramName = parameters[i]["text"].GetValue<string>();
-                localScope[paramName] = argValue;
+            var next = let.Next;
 
-                //if (!localScope.ContainsKey(paramName))
-                //{
-                //    localScope.Add(paramName, argValue);
-                //} 
-                //else
-                //{
-                //    localScope[paramName] = argValue;
-                //}
+            return Execute(next, localScope);
+        }
+        if (term is Ast.Function function)
+        {
+            var func = new Func<List<dynamic>, dynamic>((arguments) => {
+                var parameters = function.Parameters;
+
+                var localScope = new Dictionary<string, dynamic>();
+
+                foreach (var item in scope)
+                {
+                    localScope.Add(item.Key, item.Value);
+                }
+
+                for (int i = 0; i < arguments.Count; i++)
+                {
+                    var paramName = parameters[i].Text;
+                    localScope[paramName] = arguments[i];
+                }
+
+                return Execute(function.Value, localScope);
+            });
+
+            return func;
+        }
+        if (term is Ast.If @if)
+        {
+            var condition = @if.Condition;
+            var resultCondition = Execute(condition, scope);
+
+            if (resultCondition.Equals("True", StringComparison.OrdinalIgnoreCase))
+            {
+                return Execute(@if.Then, scope);
+            }
+            return Execute(@if.Otherwise, scope);
+        }
+        if (term is Call call)
+        {
+            var callee = call.Callee;
+
+            var arguments =new List<dynamic>();
+            string calleeText = null;
+
+            if(callee is Var @var1)
+            {
+                calleeText = @var1.Text;
             }
 
-            var key = text + "_" + string.Join(",", localScope.Where(x => x.Value is not JsonObject).Select(x => $"{x.Key}_{x.Value}"));
-            
-            return ExecuteMemoized(key, newNode, localScope);
+            foreach (var item in call.Arguments)
+            {
+                var argValue = Execute(item, scope);
+                arguments.Add(argValue);
+            }
+
+            //var result = Execute(callee, scope)(arguments);
+
+            var key = calleeText + "_" + string.Join(",", arguments.Select(x => $"{x}"));
+
+            var result = ExecuteMemoized(key, callee, scope, arguments);
+            return result;
+
+
         }
         
-        throw new KindNotImplementedExcepton(kind);
+        throw new KindNotImplementedExcepton(term.GetType().FullName);
     }
 
-    public void ExecutePrint(JsonNode node)
+    public string ExecuteBinary(Binary binary, Dictionary<string, dynamic> scope)
     {
-        var value = node["value"].GetValue<string>();
-        Console.WriteLine(value);
-    }
+        var op = binary.Op;
 
-    public string ExecuteBinary(JsonNode node, Dictionary<string, JsonNode> scope)
-    {
-        var op = node["op"].GetValue<string>();
-
-        var lhsValue = Execute(node["lhs"], scope);
-        var rhsValue = Execute(node["rhs"], scope);
+        var lhsValue = Execute(binary.Lhs, scope).ToString();
+        var rhsValue = Execute(binary.Rhs, scope).ToString();
 
         return ExecuteBinaryOperation(op, lhsValue, rhsValue);
     }
 
-    public string ExecuteBinaryOperation(string operation, string lhsValue, string rhsValue)
+    public dynamic ExecuteBinaryOperation(BinaryOp op, string lhsValue, string rhsValue)
     {
-        if(!Enum.TryParse(operation, ignoreCase: true, out BinaryOp op))
-        {
-            throw new Exception("Op not implemented");
-        }
-
         return op switch
         {
             BinaryOp.Add => new AddOperation().Execute(lhsValue, rhsValue),
@@ -199,20 +182,21 @@ public class Interpreter
         };
     }
 
-    public string ExecuteMemoized(string key, JsonNode node, Dictionary<string, JsonNode> scope)
+    public dynamic ExecuteMemoized(string key, Term term, Dictionary<string, dynamic> scope, List<dynamic> arguments)
     {
-        if (!_cache.TryGetValue(key, out string result))
+        if (!_cache.TryGetValue(key, out dynamic result))
         {
-            result = Execute(node, scope);
+            result = Execute(term, scope)(arguments);
             _cache[key] = result;
             _countCheckPure[key] = 1;
-        } else
+        }
+        else
         {
             var countCheckPure = _countCheckPure.ContainsKey(key) ? _countCheckPure[key] : 0;
             if (countCheckPure == 1)
             {
-                result = Execute(node, scope);
-                if(_cache[key] == result)
+                result = Execute(term, scope)(arguments);
+                if (_cache[key] == result)
                 {
                     _countCheckPure[key] += 1;
                 }

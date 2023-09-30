@@ -1,21 +1,33 @@
+using RinhaDeCompiladores.Ast;
+using System;
+using System.IO;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace RinhaDeCompiladores.Tests;
 
 public class InterpreterTests
 {
+
+    private AstRoot Serializer(string path)
+    {
+        using FileStream stream = System.IO.File.OpenRead(path);
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        options.Converters.Add(new TermConverter());
+        options.Converters.Add(new JsonStringEnumConverter());
+
+        return JsonSerializer.Deserialize(stream, typeof(AstRoot), new SourceGenerationContext(options)) as AstRoot;
+    }
     [Fact]
     public void Sum()
     {
         var path = "var/rinha/sum.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("15", result);
@@ -25,14 +37,11 @@ public class InterpreterTests
     public void SimpleSum()
     {
         var path = "var/rinha/primitive-sum.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("3", result);
@@ -43,13 +52,11 @@ public class InterpreterTests
     {
         var path = "var/rinha/combination.json";
 
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("45", result);
@@ -59,14 +66,11 @@ public class InterpreterTests
     public void Fib()
     {
         var path = "var/rinha/fib.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("832040", result);
@@ -76,14 +80,11 @@ public class InterpreterTests
     public void Tuple()
     {
         var path = "var/rinha/tuple.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("(1,2)", result);
@@ -93,14 +94,11 @@ public class InterpreterTests
     public void VariavelLivre()
     {
         var path = "var/rinha/variavel-livre.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("1", result);
@@ -110,14 +108,11 @@ public class InterpreterTests
     public void Closure()
     {
         var path = "var/rinha/closure.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("30", result);
@@ -127,14 +122,11 @@ public class InterpreterTests
     public void PrintClosure()
     {
         var path = "var/rinha/print_closure.json";
-
-        using FileStream stream = File.OpenRead(path);
-        var root = JsonObject.Parse(stream);
-        var expression = root["expression"];
+        var ast = Serializer(path);
 
         var interpreter = new Interpreter();
 
-        var result = interpreter.Execute(expression, new Dictionary<string, JsonNode>());
+        var result = interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
 
         Assert.NotNull(result);
         Assert.Equal("<#closure>", result);
