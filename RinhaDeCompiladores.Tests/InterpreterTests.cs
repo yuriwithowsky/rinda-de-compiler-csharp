@@ -122,4 +122,16 @@ public class InterpreterTests
         Assert.NotNull(result);
         Assert.Equal("<#closure>", result);
     }
+
+    [Fact]
+    public void Shadow()
+    {
+        var path = "var/rinha/shadow.json";
+        var ast = Serializer(path);
+
+        var result = _interpreter.Execute(ast.Expression, new Dictionary<string, dynamic>());
+
+        Assert.NotNull(result);
+        Assert.Equal("teste2", result);
+    }
 }

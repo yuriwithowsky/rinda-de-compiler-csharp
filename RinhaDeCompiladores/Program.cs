@@ -15,7 +15,7 @@ var path = $"/var/rinha/{fileName}";
 #if DEBUG
     var stopwatch = new Stopwatch();
     stopwatch.Start();
-    path = "var/rinha/operations.json";
+    path = "var/rinha/tuple.json";
 #endif
 
 using FileStream stream = System.IO.File.OpenRead(path);

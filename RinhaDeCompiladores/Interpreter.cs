@@ -64,6 +64,11 @@ public class Interpreter
                 throw new Exception($"Var {text} not found");
             }
 
+            if(value is Var @var1)
+            {
+                return Execute(value, scope);
+            }
+
             return value;
         }
         if (term is Ast.Print print)
@@ -71,7 +76,11 @@ public class Interpreter
             var value = Execute(print.Value, scope);
             var text = string.Empty;
 
-            if(value is Func<List<dynamic>, dynamic>)
+            if (value is dynamic[] array)
+            {
+                text = $"({array[0]},{array[1]})";
+            }
+            else if (value is Func<List<dynamic>, dynamic>)
             {
                 text = $"<#closure>";
             }
@@ -93,18 +102,18 @@ public class Interpreter
             var text = let.Name.Text;
             var value = let.Value;
 
-            scope[text] = Execute(value, scope);
-
-            var localScope = new Dictionary<string, dynamic>();
-
-            foreach (var item in scope)
+            if(value is Var @var1)
             {
-                localScope.Add(item.Key, item.Value);
+                scope[text] = value;
+            }
+            else
+            {
+                scope[text] = Execute(value, scope);
             }
 
             var next = let.Next;
 
-            return Execute(next, localScope);
+            return Execute(next, scope);
         }
         if (term is Ast.Function function)
         {
